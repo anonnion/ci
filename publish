@@ -7,20 +7,20 @@ fi
 
 php_script_file="temp.php"
 archive_file="../.ci/releases/$app_version.tar.gz"
-client_ip="x.x.x.x"
+client_ip=$(getenv "PRODUCTION_IP")
 server_port=8801
 
 # Generate the release candidate
 
-#Create needed directories
 
 
 # Make sure to be in the right folder
 cd $app_path
 
 # Archive the folder content, minding the instructions in .deployignore
-tar --exclude-ignore=../.ci/.deployignore v$app_version.tar.gz . > 
-
+tar --exclude-ignore=../.ci/.deployignore v$app_version.tar.gz . > $ci_app_version_logs_path/tar_generate.log 2>& 1
+rc=$?
+check_error "Archive release code"
 
 # Generate PHP script
 cat > "$php_script_file" <<EOF
@@ -72,12 +72,4 @@ php -S "localhost:$server_port" "$php_script_file" >/dev/null 2>&1 &
 server_pid=$!
 
 # Wait for a client to connect
-echo "Waiting for connection at http://localhost:$server_port"
-
-# Wait until the server is terminated by a client
-while kill -0 "$server_pid" >/dev/null 2>&1; do
-  sleep 1
-done
-
-# Server terminated
-echo "Server terminated by a client"
+log_echo "Waiting for connection at http://localhost:$server_port"
