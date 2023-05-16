@@ -1,18 +1,29 @@
 #!/bin/bash
 
-deploy_type=$1
-push_to_prod=$2
+app_alias=$1
+deploy_type=$2
+push_to_prod=$3
 # Read and parse configuration file
-config_file=".deploy.conf"
+# Prepare environment variables
+source env.sh
+process_app_env $app_alias
+config_file=".$app_alias-deploy.json"
+if ! [ -f $config_file]; then
+    cat > "$config_file" <<EOF
+{
+  "name": "Safe2Choose Referral Database",
+  "version": "1.0.3",
+  "path": "/home/refdb/referraldb_2023/referraldb_2023",
+  "changelog": ""
+}
+EOF
+fi
 app_name=$(jq -r '.name' "$config_file")
 app_version=$(jq -r '.version' "$config_file")
 app_path=$(jq -r '.path' "$config_file")
+changelog=$(jq -r '.changelog' "$config_file")
 
-# Source the env_processing.sh script
-source env.sh
 
-# Process the .env file into variables
-process_env
 
 ci_path=$(getenv "CI_PATH")
 
@@ -58,13 +69,13 @@ esac
 
 
 # Define paths
-ci_logs_path=../.ci/logs
-ci_app_path=../.ci/$app_name
-ci_app_logs_path=../.ci/$app_name/logs
-ci_app_installers_path=../.ci/$app_name/installers
-ci_app_releases_path=../.ci/$app_name/releases
-ci_app_version_logs_path=../.ci/$app_name/logs/$app_version
-ci_app_changelogs_path=../.ci/$app_name/changelogs
+ci_logs_path="$ci_path/logs"
+ci_app_path="$ci_path/$app_alias"
+ci_app_logs_path="$ci_path/$app_alias/logs"
+ci_app_installers_path="$ci_path/$app_alias/installers"
+ci_app_releases_path="$ci_path/$app_alias/releases"
+ci_app_version_logs_path="$ci_path/$app_alias/logs/$app_version"
+ci_app_changelogs_path="$ci_path/$app_alias/changelogs"
 log_file="$ci_logs_path/$(date '+%Y-%m-%d').log"
 
 # Function to print and log echo statements
@@ -122,13 +133,14 @@ fi
 
 # Update configuration file with new app_version
 jq --arg new_version "$app_version" '.version = $new_version' "$config_file" > temp.json && mv temp.json "$config_file"
+jq --arg new_changelog "$ci_app_changelogs_path/$app_version.md" '.changelog = $new_changelog' "$config_file" > temp.json && mv temp.json "$config_file"
 
 # Remove new lines from the configuration file
 config_content=$(tr -d '\n' < "$config_file")
 
 # Create deploy_log.json if it doesn't exist
 if ! [ -f "$ci_app_logs_path/deploy_log.json"]; then
-    cat > "$php_script_file" <<EOF
+    cat > "$ci_app_logs_path/deploy_log.json" <<EOF
 [
 
 ]

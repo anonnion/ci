@@ -5,8 +5,8 @@ if [ -z "$VERSION"]; then
 fi
 
 
-php_script_file="temp.php"
-archive_file="../.ci/releases/$app_version.tar.gz"
+php_script_file="$ci_app_path/temp.php"
+archive_file="$ci_app_releases_path/$app_version.tar.gz"
 client_ip=$(getenv "PRODUCTION_IP")
 server_port=8801
 
@@ -18,9 +18,10 @@ server_port=8801
 cd $app_path
 
 # Archive the folder content, minding the instructions in .deployignore
-tar --exclude-ignore=../.ci/.deployignore v$app_version.tar.gz . > $ci_app_version_logs_path/tar_generate.log 2>& 1
+touch $ci_app_version_logs_path/tar_generate_error.log
+tar --exclude-ignore=../.ci/.deployignore v$app_version.tar.gz . > $ci_app_version_logs_path/tar_generate.log 2> $ci_app_version_logs_path/tar_generate_error.log
 rc=$?
-check_error "Archive release code"
+check_error "Creating release tarball" $(cat $ci_app_version_logs_path/tar_generate_error.log)
 
 # Generate PHP script
 cat > "$php_script_file" <<EOF
