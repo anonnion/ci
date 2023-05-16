@@ -47,6 +47,14 @@ case $deploy_type in
         ;;
 esac
 
+
+# Create needed folders
+mkdir -p ../.ci/$app_name
+mkdir -p ../.ci/$app_name/logs
+mkdir -p ../.ci/$app_name/installers
+mkdir -p ../.ci/$app_name/releases
+mkdir -p ../.ci/$app_name/logs/$app_version
+
 # Send the value of the next version
 if [ "$action" = "next" ]; then
     if [ "$deploy_type" != "patch" ]; then
@@ -99,7 +107,6 @@ mv "$tmp_file" "$log_file"
 # Push to production if push_to_prod is 1
 if [ "$push_to_prod" = "push" ]; then
     #Move previous versions' installer script to the ci directory
-    mkdir -p ../.ci/installers
     echo "Moving former versions' install scripts into .ci directory"
     for file in *.sh; do
         # Check if the file matches the SemVer naming pattern and is not equal to the app version
