@@ -10,10 +10,6 @@ archive_file="$ci_project_releases_path/$project_version.tar.gz"
 client_ip=$(getenv "PRODUCTION_IP")
 server_port=8801
 
-# Generate the release candidate
-
-
-
 # Generate PHP script
 cat > "$php_script_file" <<EOF
 <?php
