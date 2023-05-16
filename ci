@@ -74,14 +74,16 @@ publish() {
 
 if [ -z $arg1 ]; then
     # Print help message
-    echo "CI v1.0.0"
+    echo "CI v0.0.1"
     echo "Usage: ci [init [project_name, path_to_env, path_to_deployignore], publish [project_alias, deploy_type, push_to_prod]]"
-    echo "arguments to init or publish are optional, they will be asked if not provided."
-    echo "Example: ci init \"Demo App\" /path/to/.env /path/to/.deployignore"
-    echo "Example: ci init "
-    echo "ci publish \"Demo App\" major push"
-    echo "ci publish \"Demo App\" minor push"
-    echo "ci publish \"Demo App\" patch"
+    echo "Arguments to init or publish are optional, they will be asked if not provided."
+    echo "Examples:"
+    echo "    ci init "
+    echo "    ci publish "
+    echo "    ci init \"Demo App\" /path/to/.env /path/to/.deployignore"
+    echo "    ci publish \"Demo App\" major push"
+    echo "    ci publish \"Demo App\" minor push"
+    echo "    ci publish \"Demo App\" patch push"
 fi
 
 
