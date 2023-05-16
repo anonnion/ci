@@ -5,23 +5,14 @@ if [ -z "$VERSION"]; then
 fi
 
 
-php_script_file="$ci_app_path/temp.php"
-archive_file="$ci_app_releases_path/$app_version.tar.gz"
+php_script_file="$ci_project_path/temp.php"
+archive_file="$ci_project_releases_path/$project_version.tar.gz"
 client_ip=$(getenv "PRODUCTION_IP")
 server_port=8801
 
 # Generate the release candidate
 
 
-
-# Make sure to be in the right folder
-cd $app_path
-
-# Archive the folder content, minding the instructions in .deployignore
-touch $ci_app_version_logs_path/tar_generate_error.log
-tar --exclude-ignore=../.ci/.deployignore v$app_version.tar.gz . > $ci_app_version_logs_path/tar_generate.log 2> $ci_app_version_logs_path/tar_generate_error.log
-rc=$?
-check_error "Creating release tarball" $(cat $ci_app_version_logs_path/tar_generate_error.log)
 
 # Generate PHP script
 cat > "$php_script_file" <<EOF
@@ -31,12 +22,22 @@ cat > "$php_script_file" <<EOF
 // Check if client IP matches
 if (\$client_ip === "$client_ip") {
   // Send file as response
-  \$file_path = "$archive_file";
+  // Check if the current request is for getting latest project version
+  if(strstr(\$_SERVER['REQUEST_URI'], '/latest')) {
+    die("$project_version");
+  }
+  if(strstr(\$_SERVER['REQUEST_URI'], '.tar.gz')) {
+  \$file_path = "$ci_project_releases_path\$_SERVER['REQUEST_URI']";
+
+  }
+  else {
+    \$file_path = "$archive_file";
+  }
   
   // Check if file exists
   if (file_exists(\$file_path)) {
-    // Set appropriate headers
-    header("Content-Type: application/octet-stream");
+    // Set projectropriate headers
+    header("Content-Type: projectlication/octet-stream");
     header("Content-Disposition: attachment; filename=\"" . basename(\$file_path) . "\"");
     header("Content-Length: " . filesize(\$file_path));
   
@@ -47,11 +48,11 @@ if (\$client_ip === "$client_ip") {
 
     // Kill the processes
     foreach (\$processIDs as \$pid) {
-        // Use the appropriate signal to terminate the process gracefully (or forcefully if needed)
+        // Use the projectropriate signal to terminate the process gracefully (or forcefully if needed)
         posix_kill(\$pid, SIGTERM);
     }
 
-    echo "$app_name v$app_version published successfully, connection closed.";
+    echo "$project_name v$project_version published successfully, connection closed.";
     exit;
   } else {
     // File not found

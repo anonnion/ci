@@ -1,39 +1,40 @@
 #!/bin/bash
 
-app_alias=$1
-deploy_type=$2
-push_to_prod=$3
+project_alias=${project_alias:- $1}
+deploy_type=${deploy_type:- $2}
+push_to_prod=${push_to_prod:- $3}
 # Read and parse configuration file
 # Prepare environment variables
+
 source env.sh
-process_app_env $app_alias
-config_file=".$app_alias-deploy.json"
+process_project_env "$ci_path/$project_alias/.env"
+config_file="$ci_path/$project_alias/deploy.json"
 if ! [ -f $config_file]; then
     cat > "$config_file" <<EOF
 {
-  "name": "Safe2Choose Referral Database",
-  "version": "1.0.3",
-  "path": "/home/refdb/referraldb_2023/referraldb_2023",
+  "name": "App Name",
+  "version": "0.0.0",
+  "path": "$(pwd)",
   "changelog": ""
 }
 EOF
 fi
-app_name=$(jq -r '.name' "$config_file")
-app_version=$(jq -r '.version' "$config_file")
-app_path=$(jq -r '.path' "$config_file")
+project_name=$(jq -r '.name' "$config_file")
+project_version=$(jq -r '.version' "$config_file")
+project_path=$(jq -r '.path' "$config_file")
 changelog=$(jq -r '.changelog' "$config_file")
 
 
 
 ci_path=$(getenv "CI_PATH")
 
-cd $app_path
+cd $project_path
 
 
 # Check if first argument is a command to check for the SemVer code 
 # of the current version
 if [ "$deploy_type" = "current" ]; then
-    echo "Current version is $app_version"
+    echo "Current version is $project_version"
     exit 0
 fi
 # Check if first argument is a command to check for the SemVer code 
@@ -44,22 +45,22 @@ if [ "$deploy_type" = "next" ]; then
 fi
 
 
-# Increment app_version based on deploy_type
+# Increment project_version based on deploy_type
 case $deploy_type in
     major)
-        semver=( ${app_version//./ } )
+        semver=( ${project_version//./ } )
         ((semver[0]++))
-        app_version="${semver[0]}.0.0"
+        project_version="${semver[0]}.0.0"
         ;;
     minor)
-        semver=( ${app_version//./ } )
+        semver=( ${project_version//./ } )
         ((semver[1]++))
-        app_version="${semver[0]}.${semver[1]}.0"
+        project_version="${semver[0]}.${semver[1]}.0"
         ;;
     patch)
-        semver=( ${app_version//./ } )
+        semver=( ${project_version//./ } )
         ((semver[2]++))
-        app_version="${semver[0]}.${semver[1]}.${semver[2]}"
+        project_version="${semver[0]}.${semver[1]}.${semver[2]}"
         ;;
     *)
         echo "Invalid deploy_type. Valid values are major, minor, or patch."
@@ -70,13 +71,13 @@ esac
 
 # Define paths
 ci_logs_path="$ci_path/logs"
-ci_app_path="$ci_path/$app_alias"
-ci_app_logs_path="$ci_path/$app_alias/logs"
-ci_app_installers_path="$ci_path/$app_alias/installers"
-ci_app_releases_path="$ci_path/$app_alias/releases"
-ci_app_version_logs_path="$ci_path/$app_alias/logs/$app_version"
-ci_app_changelogs_path="$ci_path/$app_alias/changelogs"
+ci_project_path="$ci_path/$project_alias"
 log_file="$ci_logs_path/$(date '+%Y-%m-%d').log"
+ci_project_logs_path="$ci_path/$project_alias/logs"
+ci_project_releases_path="$ci_path/$project_alias/releases"
+ci_project_changelogs_path="$ci_path/$project_alias/changelogs"
+ci_project_installers_path="$ci_path/$project_alias/installers"
+ci_project_version_logs_path="$ci_path/$project_alias/logs/$project_version"
 
 # Function to print and log echo statements
 log_echo() {
@@ -97,26 +98,26 @@ check_error() {
 
 # Create needed folders
 mkdir -p $ci_logs_path
-mkdir -p $ci_app_path
-mkdir -p $ci_app_logs_path
-mkdir -p $ci_app_installers_path
-mkdir -p $ci_app_releases_path
-mkdir -p $ci_app_changelogs_path
+mkdir -p $ci_project_path
+mkdir -p $ci_project_logs_path
+mkdir -p $ci_project_releases_path
+mkdir -p $ci_project_changelogs_path
+mkdir -p $ci_project_installers_path
 
 # Send the value of the next version
 if [ "$action" = "next" ]; then
     if [ "$deploy_type" != "patch" ]; then
         deploy_type="$deploy_type update"
     fi
-    echo "The next $deploy_type will be named $app_version"
+    echo "The next $deploy_type will be named $project_version"
     exit 0
 fi
 
 # Check if second argument is a command to create changelog, rather than to publish the code.
 # This is useful to both check the next version, and also create the changelog file programmatically.
 if [ "$push_to_prod" = "create-changelog" ]; then
-    touch $ci_app_changelogs_path/$app_version.md
-    echo "Changelog for version $app_version installed at $ci_app_changelogs_path/$app_version.md successfully!"
+    touch $ci_project_changelogs_path/$project_version.md
+    echo "Changelog for version $project_version installed at $ci_project_changelogs_path/$project_version.md successfully!"
     exit 0
 fi
 
@@ -125,38 +126,38 @@ fi
 # This is useful to both check the next version, and also create the installer file programmatically.
 if [ "$push_to_prod" = "create-installer" ]; then
 
-    touch $app_version.sh && chmod +x $app_version.sh
-    echo "Installation file for version $app_version created successfully!"
+    touch $project_version.sh && chmod +x $project_version.sh
+    echo "Installation file for version $project_version created successfully!"
     exit 0
 fi
 
 
-# Update configuration file with new app_version
-jq --arg new_version "$app_version" '.version = $new_version' "$config_file" > temp.json && mv temp.json "$config_file"
-jq --arg new_changelog "$ci_app_changelogs_path/$app_version.md" '.changelog = $new_changelog' "$config_file" > temp.json && mv temp.json "$config_file"
+# Update configuration file with new project_version
+jq --arg new_version "$project_version" '.version = $new_version' "$config_file" > temp.json && mv temp.json "$config_file"
+jq --arg new_changelog "$ci_project_changelogs_path/$project_version.md" '.changelog = $new_changelog' "$config_file" > temp.json && mv temp.json "$config_file"
 
 # Remove new lines from the configuration file
 config_content=$(tr -d '\n' < "$config_file")
 
 # Create deploy_log.json if it doesn't exist
-if ! [ -f "$ci_app_logs_path/deploy_log.json"]; then
-    cat > "$ci_app_logs_path/deploy_log.json" <<EOF
+if ! [ -f "$ci_project_logs_path/deploy_log.json"]; then
+    cat > "$ci_project_logs_path/deploy_log.json" <<EOF
 [
 
 ]
 EOF
 fi
 
-# Append content to the second line of deploy_log.json
-log_file="$ci_app_logs_path/deploy_log.json"
-tmp_file="$ci_app_logs_path/deploy_log_tmp.json"
+# projectend content to the second line of deploy_log.json
+log_file="$ci_project_logs_path/deploy_log.json"
+tmp_file="$ci_project_logs_path/deploy_log_tmp.json"
 
-# Create a temporary file and append the updated config_content to it
+# Create a temporary file and projectend the updated config_content to it
 echo "[" > "$tmp_file"
 echo "$config_content" >> "$tmp_file"
 echo "," >> "$tmp_file"
 
-# Append the existing content of deploy_log.json to the temporary file
+# projectend the existing content of deploy_log.json to the temporary file
 tail -n +2 "$log_file" >> "$tmp_file"
 
 # Replace deploy_log.json with the temporary file
@@ -166,10 +167,20 @@ mv "$tmp_file" "$log_file"
 rollback() {
   log_echo "An error occurred. Rolling back changes..."
   git checkout "$main_branch"
-  git branch -D "$app_version"
+  git branch -D "$project_version"
   log_echo "Rolled back to $main_branch branch."
   exit 1
 }
+
+
+# Make sure to be in the right folder
+cd $project_path
+
+# Archive the folder content, minding the instructions in .deployignore
+touch $ci_project_version_logs_path/tar_generate_error.log
+tar --exclude-ignore="$ci_project_path/.deployignore" v$project_version.tar.gz . > $ci_project_version_logs_path/tar_generate.log 2> $ci_project_version_logs_path/tar_generate_error.log
+rc=$?
+check_error "Creating release tarball" $(cat $ci_project_version_logs_path/tar_generate_error.log)
 
 
 # Push to production if push_to_prod is 1
@@ -177,10 +188,10 @@ if [ "$push_to_prod" = "push" ]; then
     #Move previous versions' installer script to the ci directory
     log_echo "Moving former versions' install scripts into .ci directory"
     for file in *.sh; do
-        # Check if the file matches the SemVer naming pattern and is not equal to the app version
-        if [[ $file =~ ^[0-9]+\.[0-9]+\.[0-9]+\.sh$ ]] && [ "$file" != "$app_version.sh" ]; then
+        # Check if the file matches the SemVer naming pattern and is not equal to the project version
+        if [[ $file =~ ^[0-9]+\.[0-9]+\.[0-9]+\.sh$ ]] && [ "$file" != "$project_version.sh" ]; then
             # Move the file to the .ci directory
-            mv "$file" "$ci_app_installers_path/"
+            mv "$file" "$ci_project_installers_path/"
             log_echo "Moved $file to .ci directory."
         fi
     done
@@ -188,17 +199,17 @@ if [ "$push_to_prod" = "push" ]; then
     log_echo "All previous installers moved, current version's installer has been copied.."
     log_echo "Creating release branch in current repo"
     # Create and switch to the new branch
-    git checkout -b "$app_version" || rollback
+    git checkout -b "$project_version" || rollback
 
     # Push the codebase to the new branch
-    git push -u origin "$app_version" || rollback
+    git push -u origin "$project_version" || rollback
 
     # Switch back to the main branch
     git checkout "$main_branch"
 
-    log_echo "Successfully created and pushed codebase to $app_version branch."
+    log_echo "Successfully created and pushed codebase to $project_version branch."
     log_echo "Pushing to production..."
-    VERSION=$app_version
+    VERSION=$project_version
     source publish.sh
     # Add your deployment commands here
 else

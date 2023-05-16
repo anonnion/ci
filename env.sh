@@ -19,7 +19,7 @@ process_app_env() {
       value="${BASH_REMATCH[2]}"
       eval "env_$key=$value"
     fi
-  done < ".$1.env"
+  done < "$1"
 }
 
 # Function to retrieve the value of an environment variable
