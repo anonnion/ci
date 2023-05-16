@@ -4,19 +4,67 @@ arg1=$1
 arg2=$2
 arg3=$3
 arg4=$4
+arg5=$5
+
+# Get the directory containing the script
+ci_dir=$(dirname "$(readlink -f "$0")")
 
 # Read and parse environment file
-source env.sh
+source $ci_dir/env.sh
+
+ci_path=$(getenv "CI_PATH")
+
 
 create_new_project() {
     if [ -z $arg2 ]; then
-        read -p "Enter project name: " project_alias
+
+        valid_input=false
+
+        while ! $valid_input; do
+            read -p "Enter project name: " project_name
+
+            # Remove leading and trailing whitespace from project_name
+            project_name=$(echo "$project_name" | xargs)
+
+            # Check if project_name contains at least one alphanumeric character
+            if [[ "$project_name" =~ [[:alnum:]] ]]; then
+                # Check if project_name contains only alphanumeric characters and whitespace
+                if [[ "$project_name" =~ ^[[:alnum:][:space:]]+$ ]]; then
+                    valid_input=true
+                else
+                    echo "Project name should only contain alphanumeric characters and whitespace."
+                fi
+            else
+                echo "Project name should contain at least one alphanumeric character."
+            fi
+        done
+
+
+        valid_input=false
+
+        while ! $valid_input; do
+            read -p "Enter project alias: " project_alias
+
+            # Check if project_alias contains at least one alphanumeric character
+            if [[ "$project_alias" =~ [[:alnum:]] ]]; then
+                # Check if project_alias contains only alphanumeric characters
+                if [[ "$project_alias" =~ ^[[:alnum:]]+$ ]]; then
+                    valid_input=true
+                else
+                    echo "Project alias should only contain alphanumeric characters."
+                fi
+            else
+                echo "Project alias should contain at least one alphanumeric character."
+            fi
+        done
+        
         read -p "Enter path to .env file or press enter to skip: " env_file
         read -p "Enter path to .deployignore or press enter to use default value (.deployignore): " deploy_ignore
     else
         project_alias=$arg2
-        env_file=$arg3
-        deploy_ignore=${arg4:-".deployignore"}
+        project_name=$arg3
+        env_file=$arg4
+        deploy_ignore=${arg5:-".deployignore"}
     fi
 
     # Define paths
@@ -43,29 +91,36 @@ create_new_project() {
     # project_alias=$1
     # env_file=$2
     # deploy_ignore=${3:-".deployignore"}
-    mkdir "$ci_path/$project_alias"
 
     # Create or copy config files for the project
-    if ! [ -f $env_file ]; then
+    if [ ! -f "$env_file" ]; then
         touch "$ci_path/$project_alias/.env"
     else
-        cp $env_file "$ci_path/$project_alias/.env"
+        cp "$env_file" "$ci_path/$project_alias/.env"
     fi
     
-    if ! [ -f $deploy_ignore ]; then
+    if [ ! -f "$deploy_ignore" ]; then
         touch "$ci_path/$project_alias/.deployignore"
     else
-        cp $deploy_ignore "$ci_path/$project_alias/.deployignore"
+        cp "$deploy_ignore" "$ci_path/$project_alias/.deployignore"
     fi
     
-    touch "$ci_path/$project_alias/deploy.json"
-    
+    cat > "$ci_path/$project_alias/deploy.json" <<EOF
+{
+  "name": "$project_name",
+  "version": "0.0.0",
+  "path": "$(pwd)",
+  "changelog": ""
+}
+EOF
+    echo "~~~  Project $project_name created successfully  ~~~"
 }
 
 publish() {
     project_alias=$arg2
-    deploy_type=$arg3
-    push_to_prod=$arg4
+    project_name=$arg3
+    deploy_type=$arg4
+    push_to_prod=$arg5
     source $ci_path/publisher.sh
 }
 

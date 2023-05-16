@@ -8,7 +8,7 @@ process_env() {
       value="${BASH_REMATCH[2]}"
       eval "env_$key=$value"
     fi
-  done < .env
+  done < "$ci_dir/.env"
 }
 
 # Function to process app specific .env file into variables
@@ -35,4 +35,4 @@ process_env
 # Process app .env file into variables
 # process_app_env $1
 
-# echo $(getenv $2)
+# echo $(getenv "CI_PATH")
