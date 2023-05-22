@@ -10,17 +10,17 @@ ___
 
 1. Clone https://github.com/anonnion/ci to your staging server. It's recommended to place it outside your development environment, since you won't need more than one for each server.
 2.   Enjoy!
-3. (Optional) You can add CI_PATH to your path, so as to make it easy to use.
+3. (Optional) You can add /path/to/ci to your path, so as to make it easy to use.
 ___
 ### How to use?
 ___
 (A) Creating a project:
 1. Go to your project's directory.
-2. (Assumming CI_PATH is already added to yur path) Create a new project by entering these into the terminal/shell and answer the questions:
+2. (Assumming /path/to/ci is already added to your path) Create a new project by entering these into the terminal/shell and answer the questions:
 ```bash
 ci init
 ```
-3. In CI_PATH/projects, you will see a folder that is named after your new project's alias, modify the demo .env to reflect the right values.
+3. In /path/to/ci/projects, you will see a folder that is named after your new project's alias, modify the demo .env to reflect the right values.
 
 (B) Publishing a project:
 ```bash
