@@ -4,20 +4,27 @@
 process_env() {
   while IFS= read -r line; do
     if [[ $line =~ ^([^=]+)=(.*)$ ]]; then
-      key="${BASH_REMATCH[1]}"
-      value="${BASH_REMATCH[2]}"
-      eval "env_$key=$value"
+      env____confirmed=1
+      env____key="${BASH_REMATCH[1]}"
+      env____value="${BASH_REMATCH[2]}"
+      eval "env_$env____key=$env____value"
     fi
-  done < "$ci_dir/.env"
+  done < $ci_dir/.env
+
+  if [ -z $env____confirmed ] && [ -z $env____empty ]; then
+    $env____empty = 1
+    echo >> $ci_dir/.env
+    process_env
+  fi
 }
 
-# Function to process app specific .env file into variables
-process_app_env() {
+# Function to process project specific .env file into variables
+process_project_env() {
   while IFS= read -r line; do
     if [[ $line =~ ^([^=]+)=(.*)$ ]]; then
-      key="${BASH_REMATCH[1]}"
-      value="${BASH_REMATCH[2]}"
-      eval "env_$key=$value"
+      env____key="${BASH_REMATCH[1]}"
+      env____value="${BASH_REMATCH[2]}"
+      eval "env_$env____key=$env____value"
     fi
   done < "$1"
 }
@@ -32,7 +39,7 @@ getenv() {
 # Process the .env file into variables
 process_env
 
-# Process app .env file into variables
-# process_app_env $1
+# Process project .env file into variables
+# process_project_env $1
 
 # echo $(getenv "CI_PATH")

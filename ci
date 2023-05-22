@@ -8,11 +8,12 @@ arg5=$5
 
 # Get the directory containing the script
 ci_dir=$(dirname "$(readlink -f "$0")")
-
+echo $ci_dir
 # Read and parse environment file
 source $ci_dir/env.sh
 
-ci_path=$(getenv "CI_PATH")
+path=$(getenv "CI_PATH")
+ci_path="$path/projects"
 
 
 create_new_project() {
@@ -68,8 +69,7 @@ create_new_project() {
     fi
 
     # Define paths
-    ci_path=$(getenv "CI_PATH")
-    ci_logs_path="$ci_path/logs"
+    ci_logs_path="$path/logs"
     ci_project_path="$ci_path/$project_alias"
     ci_project_logs_path="$ci_path/$project_alias/logs"
     ci_project_releases_path="$ci_path/$project_alias/releases"
@@ -80,6 +80,7 @@ create_new_project() {
 
 
     # Create needed folders
+    mkdir -p $ci_path
     mkdir -p $ci_logs_path
     mkdir -p $ci_project_path
     mkdir -p $ci_project_logs_path
@@ -118,23 +119,22 @@ EOF
 
 publish() {
     project_alias=$arg2
-    project_name=$arg3
-    deploy_type=$arg4
-    push_to_prod=$arg5
-    source $ci_path/publisher.sh
+    deploy_type=$arg3
+    push_to_prod=$arg4
+    source "$path/publisher.sh"
 }
 
 
 # Check input and act accordingly
 
-if [ -z $arg1 ]; then
+if [ -z $arg1 ] || [ "$arg1" == "help" ]; then
     # Print help message
     echo "CI v0.0.1"
     echo "Usage: ci [init [project_name, path_to_env, path_to_deployignore], publish [project_alias, deploy_type, push_to_prod]]"
     echo "Arguments to init or publish are optional, they will be asked if not provided."
     echo "Examples:"
-    echo "    ci init "
-    echo "    ci publish "
+    echo "    ci init  - create a new project"
+    echo "    ci publish  - publish a project to a defined server"
     echo "    ci init \"Demo App\" /path/to/.env /path/to/.deployignore"
     echo "    ci publish \"Demo App\" major push"
     echo "    ci publish \"Demo App\" minor push"

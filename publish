@@ -1,5 +1,5 @@
 #!/bin/bash
-if [ -z "$VERSION"]; then 
+if [ -z "$VERSION" ]; then 
     echo "You cannot use this script alone"
     exit 0
 fi
@@ -23,7 +23,7 @@ if (\$client_ip === "$client_ip") {
     die("$project_version");
   }
   if(strstr(\$_SERVER['REQUEST_URI'], '.tar.gz')) {
-  \$file_path = "$ci_project_releases_path\$_SERVER['REQUEST_URI']";
+  \$file_path = "$ci_project_releases_path/\$_SERVER[REQUEST_URI]";
 
   }
   else {
@@ -64,10 +64,45 @@ if (\$client_ip === "$client_ip") {
 }
 ?>
 EOF
+function is_port_available() {
+    local port=$1
+    timeout 1 bash -c "echo >/dev/tcp/localhost/$port" >/dev/null 2>&1
+    return $?
+}
 
-# Start PHP development server in the background
-php -S "localhost:$server_port" "$php_script_file" >/dev/null 2>&1 &
-server_pid=$!
+function wait_for_port() {
+    local port=$1
+    local n=$2
+    local retries=$3
+    local count=0
+    while is_port_available "$port"; do
+        echo "Waiting..."
+        if [ "$retries" -gt 0 ]; then
+            count=$((count+1))
+            echo "Port $server_port is still in use. Waiting for $wait_time seconds at retry #$count..."
+            sleep "$n"
+        fi
+        retries=$((retries - 1))
+    done
+    log_echo "Waited for $(($count*5)) seconds before port $server_port became available."
+}
 
-# Wait for a client to connect
-log_echo "Waiting for connection at http://localhost:$server_port"
+wait_time=5
+if ! is_port_available "$server_port"; then
+    echo "Port $server_port is available."
+    # Wait for a client to connect
+    log_echo "Waiting for connection at http://localhost:$server_port"
+    # Start PHP development server in the background
+    php -S "localhost:$server_port" "$php_script_file" >/dev/null 2>&1
+    server_pid=$!
+else
+    echo "Port $server_port is in use. Waiting for $wait_time seconds..."
+    wait_for_port "$server_port" "$wait_time" 100
+    echo "Port $server_port is now available."
+    # Wait for a client to connect
+    log_echo "Waiting for connection at http://localhost:$server_port"
+    # Start PHP development server in the background
+    php -S "localhost:$server_port" "$php_script_file" >/dev/null 2>&1
+    server_pid=$!
+fi
+
