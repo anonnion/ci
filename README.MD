@@ -9,9 +9,8 @@ ___
 ___
 
 1. Clone https://github.com/anonnion/ci to your staging server. It's recommended to place it outside your development environment, since you won't need more than one for each server.
-2. copy .env.example to .env, and enter the /path/to/ci as value for CI_PATH variable. 
-3.   Enjoy!
-4. (Optional) You can add CI_PATH to your path, so as to make it easy to use.
+2.   Enjoy!
+3. (Optional) You can add CI_PATH to your path, so as to make it easy to use.
 ___
 ### How to use?
 ___
