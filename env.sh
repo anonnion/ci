@@ -22,11 +22,18 @@ process_env() {
 process_project_env() {
   while IFS= read -r line; do
     if [[ $line =~ ^([^=]+)=(.*)$ ]]; then
+      env____confirmed=1
       env____key="${BASH_REMATCH[1]}"
       env____value="${BASH_REMATCH[2]}"
       eval "env_$env____key=$env____value"
     fi
   done < "$1"
+
+  if [ -z $env____confirmed ] && [ -z $env____empty ]; then
+    $env____empty = 1
+    echo >> "$1"
+    process_env
+  fi
 }
 
 # Function to retrieve the value of an environment variable
