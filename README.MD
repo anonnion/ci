@@ -16,7 +16,7 @@ ___
 ___
 (A) Creating a project:
 1. Go to your project's directory.
-2. (Assumming CI_PATH is already added to yur path) Create a new project by entering these into the terminal/shell:
+2. (Assumming CI_PATH is already added to yur path) Create a new project by entering these into the terminal/shell and answer the questions:
 ```bash
 ci init
 ```
