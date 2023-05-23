@@ -30,3 +30,29 @@ Where:
 1. `PROJECT_ALIAS` is the short name you supplied for your project during project creation.
 2. `DEPLOY_TYPE` is any of `major`, `minor`, or `patch` and it determines the version naming using SemVer naming convention.
 3. `PUSH_OR_STORE` is either `push` or `store`, where `push` means the production ready code will be stored in a tarball, then pushed to the production server, also, a git branch to denote the release will be created, and the code will be pushed to the branch (if it is enabled and configured in the project's .env file for ci). `store` means the code will be tarball'ed, then stored on the staging server, without moving it anywhere.
+
+
+### Typing ci in terminal returns the help message below:
+
+<pre>
+Usage: ci [init [project_name, path_to_env, path_to_deployignore], publish [project_alias, deploy_type, push_to_prod]]
+Arguments to init or publish are optional, they will be asked if not provided.
+Examples:
+    ci init  - create a new project
+    ci publish  - publish a project to a defined server
+Examples of arguments to ci init
+    ci init "Demo App" /path/to/.env /path/to/.deployignore
+Other functions of ci publish: 
+    ci publish PROJECT_NAME DEPLOY_TYPE create-changelog  - creates a PROJECT_VERSION.md file in the project's root directory, which will be added to your deploy log.
+    ci publish create-installer - creates an installer: PROJECT_VERSION.sh file in the project's root directory, which will run after the production server has fetched the published version.
+Further publish examples of ci publish: 
+    ci publish "Demo App" major push
+    ci publish "Demo App" minor push
+    ci publish "Demo App" patch push
+Where: 
+    DEPLOY_TYPE can be either major, minor or patch
+and: 
+    PUSH_OR_STORE can be either push or store
+    store: creates the release file only.
+    push: creates the release file, and also creates a one-time, IP restricted access for the configured server to download the release file. See the .env file of your project to configure the server that can access the release file.
+</pre>
