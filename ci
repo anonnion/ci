@@ -147,13 +147,19 @@ if [ -z $arg1 ] || [ "$arg1" == "help" ]; then
     echo "    ci publish  - publish a project to a defined server"
     echo "Examples of arguments to ci init"
     echo "    ci init \"Demo App\" /path/to/.env /path/to/.deployignore"
-    echo "Other  functions of ci publish: "
-    echo "    ci publish create-changelog - creates a PROJECT_VERSION.md file in the project's root directory, which will be added to your deploy log."
+    echo "Other functions of ci publish: "
+    echo "    ci publish PROJECT_NAME DEPLOY_TYPE create-changelog  - creates a PROJECT_VERSION.md file in the project's root directory, which will be added to your deploy log."
     echo "    ci publish create-installer - creates an installer: PROJECT_VERSION.sh file in the project's root directory, which will run after the production server has fetched the published version."
     echo "Further publish examples of ci publish: "
     echo "    ci publish \"Demo App\" major push"
     echo "    ci publish \"Demo App\" minor push"
     echo "    ci publish \"Demo App\" patch push"
+    echo "Where: "
+    echo "    DEPLOY_TYPE can be either major, minor or patch"
+    echo "and: "
+    echo "    PUSH_OR_STORE can be either push or store"
+    echo "    store: creates the release file only."
+    echo "    push: creates the release file, and also creates a one-time, IP restricted access for the configured server to download the release file. See the .env file of your project to configure the server that can access the release file."
 fi
 
 
