@@ -132,7 +132,29 @@ if [ "$push_to_prod" = "create-changelog" ]; then
     fi
     touch $changelog_file
     echo "# Changes in v1.0.5" > $changelog_file
-    echo "## Deployment type: patch" > $changelog_file
+    echo >> $changelog_file
+    echo "## Deployment type: patch" >> $changelog_file
+    echo >> $changelog_file
+    echo "### [Added]: " >> $changelog_file
+    echo "<ul>" >> $changelog_file
+    echo "  <li>No items</li>" >> $changelog_file
+    echo "</ul>" >> $changelog_file
+    echo >> $changelog_file
+    echo "### [Fixed]: " >> $changelog_file
+    echo "<ul>" >> $changelog_file
+    echo "  <li>No items</li>" >> $changelog_file
+    echo "</ul>" >> $changelog_file
+    echo >> $changelog_file
+    echo "### [Removed]: " >> $changelog_file
+    echo "<ul>" >> $changelog_file
+    echo "  <li>No items</li>" >> $changelog_file
+    echo "</ul>" >> $changelog_file
+    echo >> $changelog_file
+    echo "### [Notes]: " >> $changelog_file
+    echo "<ul>" >> $changelog_file
+    echo "  <li>No items</li>" >> $changelog_file
+    echo "</ul>" >> $changelog_file
+    echo >> $changelog_file
     echo "Changelog for version $project_version installed at $changelog_file successfully!"
     exit 0
 fi
