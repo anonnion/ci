@@ -137,7 +137,11 @@ fi
 
 # Update configuration file with new project_version
 jq --arg new_version "$project_version" '.version = $new_version' "$config_file" >temp.json && mv temp.json "$config_file"
+
+# Check if changelog file exists for current version, and add it to the deploy_log
+if [ -f "$ci_project_changelogs_path/$project_version.md" ]; then
 jq --arg new_changelog "$ci_project_changelogs_path/$project_version.md" '.changelog = $new_changelog' "$config_file" >temp.json && mv temp.json "$config_file"
+fi
 
 # Remove new lines from the configuration file
 config_content=$(tr -d '\n' <"$config_file")

@@ -7,7 +7,7 @@ arg4=$4
 arg5=$5
 
 #Get current dir
-$dir=$(pwd)
+dir=$(pwd)
 # Get the directory containing the script
 ci_dir=$(dirname "$(readlink -f "$0")")
 echo "Using OpenCide installed in $ci_dir"
@@ -97,7 +97,8 @@ create_new_project() {
 
     # Create or copy config files for the project
     if [ ! -f "$env_file" ]; then
-        touch "$ci_path/$project_alias/.env"
+        env_file="$ci_path/$project_alias/.env"
+        touch $env_file
         echo "PROJECT_NAME=\"$project_name\"" > "$env_file"
         echo "PRODUCTION_IP=\"x.x.x.x\"" >> "$env_file"
         echo "PROJECT_PATH=\"$dir\"" >> "$env_file"
