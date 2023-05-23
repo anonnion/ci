@@ -125,8 +125,15 @@ fi
 # Check if second argument is a command to create changelog, rather than to publish the code.
 # This is useful to both check the next version, and also create the changelog file programmatically.
 if [ "$push_to_prod" = "create-changelog" ]; then
-    touch $ci_project_changelogs_path/$project_version.md
-    echo "Changelog for version $project_version installed at $ci_project_changelogs_path/$project_version.md successfully!"
+    changelog_file="$ci_project_changelogs_path/$project_version.md"
+    if [ -f $changelog_file ]; then
+        echo "No changes: Changelog for version $project_version already installed at $changelog_file!"
+        exit 0
+    fi
+    touch $changelog_file
+    echo "# Changes in v1.0.5" > $changelog_file
+    echo "## Deployment type: patch" > $changelog_file
+    echo "Changelog for version $project_version installed at $changelog_file successfully!"
     exit 0
 fi
 
