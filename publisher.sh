@@ -222,7 +222,7 @@ rc=$?
 check_error "Creating release tarball" $(cat $ci_project_version_logs_path/tar_generate_error.log)
 
 # Push to production if push_to_prod is "push"
-if [ "$push_to_prod" = "push" ]; then
+if [ "$push_to_prod" = "push" ] || [ "$push_to_prod" = "git" ]; then
     #Move previous versions' installer script to the ci directory
     log_echo "Moving former versions' install scripts into .ci directory"
     for file in *.sh; do
@@ -280,11 +280,13 @@ if [ "$push_to_prod" = "push" ]; then
             log_echo "Successfully created and pushed codebase to $project_version branch."
         fi
     fi
-
-    log_echo "Pushing to production..."
-    VERSION=$project_version
-    source "$path/publish.sh"
-    # Add your deployment commands here
+    if [ "$push_to_prod" = "push" ]; then
+        log_echo "Pushing to production..."
+        VERSION=$project_version
+        source "$path/publish.sh"
+    else
+        log_echo "Pushed to git, skipping production push."
+    fi
 else
     echo "Skipping production push."
 fi
