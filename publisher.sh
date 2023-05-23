@@ -17,6 +17,10 @@ if [ ! $ci_path ] || [ -z $ci_path ]; then
 
 fi
 
+if [ ! -f "$ci_path/$project_alias/.env" ]; then 
+    echo "Project \"$project_alias\" does not exist, use \`ci init\` to create a new project"
+    exit 1
+fi
 process_project_env "$ci_path/$project_alias/.env"
 config_file="$ci_path/$project_alias/deploy.json"
 if [ ! -f $config_file ]; then
