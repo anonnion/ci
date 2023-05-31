@@ -320,6 +320,7 @@ if [ "$push_to_prod" = "push" ] || [ "$push_to_prod" = "git" ]; then
 else
     if [ -f "$project_path/$project_version.md" ]; then
         # rm "$project_path/$project_version.md"
+        echo ""
     fi
     echo "Cleaning up and skipping production push successful."
 fi
