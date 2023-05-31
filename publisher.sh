@@ -178,7 +178,7 @@ git_main_branch=$(getenv "GIT_MAIN_BRANCH")
 
 # Check if changelog file exists for current version, and add it to the deploy_log
 if [ -f "$ci_project_changelogs_path/$project_version.md" ]; then
-    cp "$ci_project_changelogs_path/$project_version.md" "$ci_project_path/"
+    cp "$ci_project_changelogs_path/$project_version.md" "$project_path/"
     if [ $push_to_git = true ]; then
         changelog_url="$git_remote_url/tree/$project_version/$project_version.md"
         jq --arg new_changelog "$changelog_url" '.changelog = $new_changelog' "$config_file" >temp.json && mv temp.json "$config_file"
@@ -289,8 +289,8 @@ if [ "$push_to_prod" = "push" ] || [ "$push_to_prod" = "git" ]; then
             log_echo "Successfully created and pushed codebase to $project_version branch."
         fi
     fi
-    if [ -f "$ci_project_path/$project_version.md" ]; then
-        rm "$ci_project_path/$project_version.md"
+    if [ -f "$project_path/$project_version.md" ]; then
+        rm "$project_path/$project_version.md"
     fi
     if [ "$push_to_prod" = "push" ]; then
         log_echo "Pushing to production..."
@@ -300,8 +300,8 @@ if [ "$push_to_prod" = "push" ] || [ "$push_to_prod" = "git" ]; then
         log_echo "Pushed to git, skipping production push."
     fi
 else
-    if [ -f "$ci_project_path/$project_version.md" ]; then
-        rm "$ci_project_path/$project_version.md"
+    if [ -f "$project_path/$project_version.md" ]; then
+        rm "$project_path/$project_version.md"
     fi
     echo "Cleaning up and skipping production push successful."
 fi
