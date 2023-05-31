@@ -55,6 +55,6 @@ getenv() {
 process_env
 
 # Process project .env file into variables
-process_project_env $1
+# process_project_env $1
 
 # echo $(getenv "CI_PATH")
