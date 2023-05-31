@@ -39,7 +39,7 @@ project_path=$(jq -r '.path' "$config_file")
 changelog=$(jq -r '.changelog' "$config_file")
 changelog="${changelog/".git"/}"
 
-cd $project_path
+cd "$project_path"
 
 # Check if first argument is a command to check for the SemVer code
 # of the current version
@@ -267,8 +267,9 @@ if [ "$push_to_prod" = "push" ] || [ "$push_to_prod" = "git" ]; then
         if [ -f "$project_path/.gitignore" ]; then
             mv "$project_path/.gitignore" "$project_path/.temp_ignore"
         fi
-    cp "$ci_project_path/.deployignore" "$project_path/.gitignore"
-    echo "Branching.."
+        cp "$ci_project_path/.deployignore" "$project_path/.gitignore"
+        echo "Branching.."
+        cd "$project_path"
         # Check if git is already initialized
         if ! [ -d .git ]; then
             git init
@@ -290,7 +291,6 @@ if [ "$push_to_prod" = "push" ] || [ "$push_to_prod" = "git" ]; then
             echo "Creating new release branch: $project_version"
             git checkout -b "$project_version" || rollback
             git add *
-            git add *
             git add "$project_version.md"
             git commit -m"Release v$project_version" || rollback
             echo "Pushing release code to branch $project_version"
@@ -308,8 +308,7 @@ if [ "$push_to_prod" = "push" ] || [ "$push_to_prod" = "git" ]; then
     # rm "$ci_project_path/.deployignore" "$project_path/.gitignore"
     fi
     if [ -f "$project_path/$project_version.md" ]; then
-        # rm "$project_path/$project_version.md"
-        echo ""
+        rm "$project_path/$project_version.md"
     fi
     if [ "$push_to_prod" = "push" ]; then
         log_echo "Pushing to production..."
@@ -320,8 +319,7 @@ if [ "$push_to_prod" = "push" ] || [ "$push_to_prod" = "git" ]; then
     fi
 else
     if [ -f "$project_path/$project_version.md" ]; then
-        # rm "$project_path/$project_version.md"
-        echo ""
+        rm "$project_path/$project_version.md"
     fi
     echo "Cleaning up and skipping production push successful."
 fi
