@@ -155,7 +155,7 @@ get_info() {
         project_version=$(jq -r '.version' "$config_file")
         project_path=$(jq -r '.path' "$config_file")
         changelog=$(jq -r '.changelog' "$config_file")
-        changelog="${changelog/".git"/""}"
+        changelog="${changelog/".git"/}"
         echo ""
         echo "Project Name: $project_name"
         echo "Project alias: $project_alias"

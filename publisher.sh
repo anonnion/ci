@@ -37,7 +37,7 @@ project_name=$(jq -r '.name' "$config_file")
 project_version=$(jq -r '.version' "$config_file")
 project_path=$(jq -r '.path' "$config_file")
 changelog=$(jq -r '.changelog' "$config_file")
-changelog="${changelog/".git"/""}"
+changelog="${changelog/".git"/}"
 
 cd $project_path
 
@@ -184,7 +184,7 @@ git_main_branch=$(getenv "GIT_MAIN_BRANCH")
 if [ -f "$ci_project_changelogs_path/$project_version.md" ]; then
     cp "$ci_project_changelogs_path/$project_version.md" "$project_path/"
     if [ $push_to_git = true ]; then
-        git_remote_changelog="${git_remote_url/".git"/""}"
+        git_remote_changelog="${git_remote_url/".git"/}"
         changelog_url="$git_remote_changelog/tree/$project_version/$project_version.md"
         jq --arg new_changelog "$changelog_url" '.changelog = $new_changelog' "$config_file" >temp.json && mv temp.json "$config_file"
     else
