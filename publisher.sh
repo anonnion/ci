@@ -136,21 +136,25 @@ if [ "$push_to_prod" = "create-changelog" ]; then
     echo "## Deployment type: $deploy_type" >> $changelog_file
     echo >> $changelog_file
     echo "### [Added]: " >> $changelog_file
+    echo >> $changelog_file
     echo "<ul>" >> $changelog_file
     echo "  <li>No items</li>" >> $changelog_file
     echo "</ul>" >> $changelog_file
     echo >> $changelog_file
     echo "### [Fixed]: " >> $changelog_file
+    echo >> $changelog_file
     echo "<ul>" >> $changelog_file
     echo "  <li>No items</li>" >> $changelog_file
     echo "</ul>" >> $changelog_file
     echo >> $changelog_file
     echo "### [Removed]: " >> $changelog_file
+    echo >> $changelog_file
     echo "<ul>" >> $changelog_file
     echo "  <li>No items</li>" >> $changelog_file
     echo "</ul>" >> $changelog_file
     echo >> $changelog_file
     echo "### [Notes]: " >> $changelog_file
+    echo >> $changelog_file
     echo "<ul>" >> $changelog_file
     echo "  <li>No items</li>" >> $changelog_file
     echo "</ul>" >> $changelog_file
