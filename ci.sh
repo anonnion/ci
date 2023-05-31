@@ -48,7 +48,18 @@ create_new_project() {
 
         while ! $valid_input; do
             read -p "Enter project alias: " project_alias
-
+            # Check if a project with the alias already exists
+            if [ -d "$ci_path/$project_alias" ]; then
+                echo "A project already exists with this alias"
+                read -p "Do you want to overwrite $project_alias? [Enter y/n]: " yesorno
+                if [[ "$yesorno" == "y" ]]; then
+                    valid_input=true
+                else
+                    valid_input=false
+                    echo "Please use another alias for your new project"
+                    continue
+                fi
+            fi
             # Check if project_alias contains at least one alphanumeric character
             if [[ "$project_alias" =~ [[:alnum:]] ]]; then
                 # Check if project_alias contains only alphanumeric characters
