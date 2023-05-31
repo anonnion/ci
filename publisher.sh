@@ -290,6 +290,7 @@ if [ "$push_to_prod" = "push" ] || [ "$push_to_prod" = "git" ]; then
             echo "Creating new release branch: $project_version"
             git checkout -b "$project_version" || rollback
             git add *
+            git add "$project_version.md"
             git commit -m"Release v$project_version" || rollback
             echo "Pushing release code to branch $project_version"
             # Push the codebase to the new branch
