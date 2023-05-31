@@ -58,5 +58,7 @@ and:
     PUSH_OR_STORE_OR_GIT can be either `push` or `store` or `git`
     store: creates the release file only.
     git: creates the release file and push to git release branch.
-    push: creates the release file, and also creates a one-time, IP restricted access for the configured server to download the release file. See the .env file of your project to configure the server that can access the release file.
+    push: creates the release file, pushes to git, and also creates a one-time, IP restricted access to download the release file. See the .env file of your project to configure access to the release file. 
+
+    Note that the one-time server may not work on your local environment.
 </pre>
