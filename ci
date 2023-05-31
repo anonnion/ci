@@ -146,9 +146,23 @@ publish() {
     source "$path/publisher.sh"
 }
 
-get_alias() {
+get_info() {
     if [ -f "$dir/.ci" ]; then
-        echo "Current Project alias: $(<"$dir/.ci")"
+        echo "Fetching Project Information..."
+        project_alias="$(<"$dir/.ci")"
+        config_file="$path/projects/$project_alias/deploy.json"
+        project_name=$(jq -r '.name' "$config_file")
+        project_version=$(jq -r '.version' "$config_file")
+        project_path=$(jq -r '.path' "$config_file")
+        changelog=$(jq -r '.changelog' "$config_file")
+        changelog="${changelog/".git"/""}"
+        echo ""
+        echo "Project Name: $project_name"
+        echo "Project alias: $project_alias"
+        echo "Changelog: $path/projects/$project_alias/changelogs/$project_version.md"
+        echo "Remote Changelog: $changelog"
+        echo "Version: $project_version"
+        echo "Path: $project_path"
     else
         echo "No OpenCide project found in the current directory"
     fi
@@ -159,12 +173,13 @@ get_alias() {
 if [ -z $arg1 ] || [ "$arg1" == "help" ]; then
     # Print help message
     echo "CI v0.0.1"
-    get_alias
+    get_info
     echo "Usage: ci [init [project_name, path_to_env, path_to_deployignore], publish [project_alias, deploy_type, push_to_prod]]"
     echo "Arguments to init is optional, they will be asked if not provided."
     echo "Examples:"
     echo "    ci init  - create a new project"
     echo "    ci publish  - publish a project to a defined server"
+    echo "    ci info  - Returns the info of the project in the current working directory"
     echo "Examples of arguments to ci init"
     echo "    ci init PROJECT_ALIAS /path/to/.env /path/to/.deployignore"
     echo "Other functions of ci publish: "
@@ -195,6 +210,6 @@ if [ "$arg1" == "publish" ]; then
     publish
 fi
 
-if [ "$arg1" == "alias" ]; then
-    get_alias
+if [ "$arg1" == "info" ]; then
+    get_info
 fi

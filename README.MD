@@ -39,13 +39,13 @@ Where:
 Using OpenCide installed in /path/to/your/ci/directory
 
 CI v0.0.1
-Project alias: tp3
+No OpenCide project found in the current directory
 Usage: ci [init [project_name, path_to_env, path_to_deployignore], publish [project_alias, deploy_type, push_to_prod]]
 Arguments to init is optional, they will be asked if not provided.
 Examples:
     ci init  - create a new project
     ci publish  - publish a project to a defined server
-    ci alias  - returns the project alias of the project in the current directory
+    ci info  - Returns the info of the project in the current working directory
 Examples of arguments to ci init
     ci init PROJECT_ALIAS /path/to/.env /path/to/.deployignore
 Other functions of ci publish: 
