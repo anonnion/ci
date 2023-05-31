@@ -133,7 +133,7 @@ if [ "$push_to_prod" = "create-changelog" ]; then
     touch $changelog_file
     echo "# Changes in v$project_version" > $changelog_file
     echo >> $changelog_file
-    echo "## Deployment type: ${deploy_type^^}" >> $changelog_file
+    echo "## Deployment type: $deploy_type" >> $changelog_file
     echo >> $changelog_file
     echo "### [Added]: " >> $changelog_file
     echo "<ul>" >> $changelog_file
