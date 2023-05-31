@@ -289,6 +289,9 @@ if [ "$push_to_prod" = "push" ] || [ "$push_to_prod" = "git" ]; then
             log_echo "Successfully created and pushed codebase to $project_version branch."
         fi
     fi
+    if [ -f "$ci_project_path/$project_version.md" ]; then
+        rm "$ci_project_path/$project_version.md"
+    fi
     if [ "$push_to_prod" = "push" ]; then
         log_echo "Pushing to production..."
         VERSION=$project_version
@@ -297,5 +300,8 @@ if [ "$push_to_prod" = "push" ] || [ "$push_to_prod" = "git" ]; then
         log_echo "Pushed to git, skipping production push."
     fi
 else
-    echo "Skipping production push."
+    if [ -f "$ci_project_path/$project_version.md" ]; then
+        rm "$ci_project_path/$project_version.md"
+    fi
+    echo "Cleaning up and skipping production push successful."
 fi
