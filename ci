@@ -160,6 +160,7 @@ get_info() {
         echo "Project Name: $project_name"
         echo "Project alias: $project_alias"
         echo "Changelog: $path/projects/$project_alias/changelogs/$project_version.md"
+        echo "Deploy Ignore File: $path/projects/$project_alias/.deployignore"
         echo "Remote Changelog: $changelog"
         echo "Version: $project_version"
         echo "Path: $project_path"
