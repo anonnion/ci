@@ -228,9 +228,11 @@ cd $project_path
 # Store the version codebase in a tarball, minding the instructions in .deployignore
 touch $ci_project_version_logs_path/tar_generate_error.log
 
-tar --exclude-ignore="$ci_project_path/.deployignore" -cf "$ci_project_releases_path/v$project_version.tar.gz" . >$ci_project_version_logs_path/tar_generate.log 2>$ci_project_version_logs_path/tar_generate_error.log
-rc=$?
-check_error "Creating release tarball" $(cat $ci_project_version_logs_path/tar_generate_error.log)
+if [ "$push_to_prod" != "git" ]; then
+    tar --exclude-ignore="$ci_project_path/.deployignore" -cf "$ci_project_releases_path/v$project_version.tar.gz" . >$ci_project_version_logs_path/tar_generate.log 2>$ci_project_version_logs_path/tar_generate_error.log
+    rc=$?
+    check_error "Creating release tarball" $(cat $ci_project_version_logs_path/tar_generate_error.log)
+fi
 
 # Push to production if push_to_prod is "push"
 if [ "$push_to_prod" = "push" ] || [ "$push_to_prod" = "git" ]; then
