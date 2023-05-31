@@ -178,6 +178,7 @@ git_main_branch=$(getenv "GIT_MAIN_BRANCH")
 
 # Check if changelog file exists for current version, and add it to the deploy_log
 if [ -f "$ci_project_changelogs_path/$project_version.md" ]; then
+    cp "$ci_project_changelogs_path/$project_version.md" "$ci_project_path/"
     if [ $push_to_git = true ]; then
         changelog_url="$git_remote_url/tree/$project_version/$project_version.md"
         jq --arg new_changelog "$changelog_url" '.changelog = $new_changelog' "$config_file" >temp.json && mv temp.json "$config_file"
