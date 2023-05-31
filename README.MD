@@ -35,24 +35,28 @@ Where:
 ### Typing ci in terminal returns the help message below:
 
 <pre>
+Using OpenCide installed in /home/refdb/referraldb_2023/.ci
+CI v0.0.1
 Usage: ci [init [project_name, path_to_env, path_to_deployignore], publish [project_alias, deploy_type, push_to_prod]]
-Arguments to init or publish are optional, they will be asked if not provided.
+Arguments to init is optional, they will be asked if not provided.
 Examples:
     ci init  - create a new project
     ci publish  - publish a project to a defined server
 Examples of arguments to ci init
-    ci init "Demo App" /path/to/.env /path/to/.deployignore
+    ci init PROJECT_ALIAS /path/to/.env /path/to/.deployignore
 Other functions of ci publish: 
     ci publish PROJECT_NAME DEPLOY_TYPE create-changelog  - creates a PROJECT_VERSION.md file in the project's root directory, which will be added to your deploy log.
-    ci publish create-installer - creates an installer: PROJECT_VERSION.sh file in the project's root directory, which will run after the production server has fetched the published version.
+    ci publish PROJECT_NAME DEPLOY_TYPE create-installer - creates an installer: PROJECT_VERSION.sh file in the project's root directory, which will run after the production server has fetched the published version.
 Further publish examples of ci publish: 
-    ci publish "Demo App" major push
-    ci publish "Demo App" minor push
-    ci publish "Demo App" patch push
+    ci publish PROJECT_ALIAS major PUSH_OR_STORE_OR_GIT
+    ci publish PROJECT_ALIAS minor PUSH_OR_STORE_OR_GIT
+    ci publish PROJECT_ALIAS patch PUSH_OR_STORE_OR_GIT
 Where: 
     DEPLOY_TYPE can be either major, minor or patch
+    PROJECT_ALIAS is the alias supplied to ci init
 and: 
-    PUSH_OR_STORE can be either push or store
+    PUSH_OR_STORE_OR_GIT can be either `push` or `store` or `git`
     store: creates the release file only.
+    git: creates the release file and push to git release branch.
     push: creates the release file, and also creates a one-time, IP restricted access for the configured server to download the release file. See the .env file of your project to configure the server that can access the release file.
 </pre>
