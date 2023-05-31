@@ -148,7 +148,7 @@ publish() {
 
 get_alias() {
     if [ -f "$dir/.ci" ]; then
-        echo "Current Project alias: $(<$dir/.ci)"
+        echo "Current Project alias: $(<"$dir/.ci")"
     else
         echo "No OpenCide project found in the current directory"
     fi
