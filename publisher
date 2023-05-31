@@ -308,7 +308,8 @@ if [ "$push_to_prod" = "push" ] || [ "$push_to_prod" = "git" ]; then
     # rm "$ci_project_path/.deployignore" "$project_path/.gitignore"
     fi
     if [ -f "$project_path/$project_version.md" ]; then
-        rm "$project_path/$project_version.md"
+        # rm "$project_path/$project_version.md"
+        echo ""
     fi
     if [ "$push_to_prod" = "push" ]; then
         log_echo "Pushing to production..."
