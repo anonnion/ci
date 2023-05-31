@@ -131,9 +131,9 @@ if [ "$push_to_prod" = "create-changelog" ]; then
         exit 0
     fi
     touch $changelog_file
-    echo "# Changes in v1.0.5" > $changelog_file
+    echo "# Changes in v$project_version" > $changelog_file
     echo >> $changelog_file
-    echo "## Deployment type: patch" >> $changelog_file
+    echo "## Deployment type: ${deploy_type^^}" >> $changelog_file
     echo >> $changelog_file
     echo "### [Added]: " >> $changelog_file
     echo "<ul>" >> $changelog_file
@@ -257,6 +257,10 @@ if [ "$push_to_prod" = "push" ] || [ "$push_to_prod" = "git" ]; then
 
     # Check if $git_push is true
     if [ $push_to_git = true ]; then
+        if [ -f "$project_path/.gitignore" ]; then
+            mv "$project_path/.gitignore" "$project_path/.temp_ignore"
+        fi
+    cp "$ci_project_path/.deployignore" "$project_path/.gitignore"
     echo "Branching.."
         # Check if git is already initialized
         if ! [ -d .git ]; then
@@ -278,7 +282,8 @@ if [ "$push_to_prod" = "push" ] || [ "$push_to_prod" = "git" ]; then
             # Create and switch to the new branch
             echo "Creating new release branch: $project_version"
             git checkout -b "$project_version" || rollback
-
+            git add *
+            git commit -m"Release v$project_version" || rollback
             echo "Pushing release code to branch $project_version"
             # Push the codebase to the new branch
             git push "$project_alias" -u "$project_version" || rollback
@@ -288,6 +293,10 @@ if [ "$push_to_prod" = "push" ] || [ "$push_to_prod" = "git" ]; then
 
             log_echo "Successfully created and pushed codebase to $project_version branch."
         fi
+    if [ -f "$project_path/.temp_ignore" ]; then
+        mv "$project_path/.temp_ignore" "$project_path/.gitignore"
+    fi
+    # rm "$ci_project_path/.deployignore" "$project_path/.gitignore"
     fi
     if [ -f "$project_path/$project_version.md" ]; then
         rm "$project_path/$project_version.md"

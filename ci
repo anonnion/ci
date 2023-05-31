@@ -161,10 +161,10 @@ if [ -z $arg1 ] || [ "$arg1" == "help" ]; then
     echo "    PUSH_OR_STORE_OR_GIT can be either \`push\` or \`store\` or \`git\`"
     echo "    store: creates the release file only."
     echo "    git: creates the release file and push to git release branch."
-fi
     echo "    push: creates the release file, pushes to git, and also creates a one-time, IP restricted access to download the release file. See the .env file of your project to configure access to the release file." 
     echo "    "
     echo "    Note that the one-time server may not work on your local environment."
+fi
 
 
 if [ "$arg1" == "init" ]; then
