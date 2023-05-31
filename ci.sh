@@ -117,7 +117,7 @@ create_new_project() {
         echo "GIT_REMOTE_URL=\"\"" >> "$env_file"
         echo "GIT_MAIN_BRANCH=\"\"" >> "$env_file"
         echo "GIT_PUSH=false" >> "$env_file"
-        echo "Environment file installed at $env_file."
+        echo "Environment file installed at $env_file"
     else
         cp "$env_file" "$ci_path/$project_alias/.env"
     fi
