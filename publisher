@@ -171,9 +171,19 @@ fi
 # Update configuration file with new project_version
 jq --arg new_version "$project_version" '.version = $new_version' "$config_file" >temp.json && mv temp.json "$config_file"
 
+
+push_to_git=$(getenv "GIT_PUSH")
+git_remote_url=$(getenv "GIT_REMOTE_URL")
+git_main_branch=$(getenv "GIT_MAIN_BRANCH")
+
 # Check if changelog file exists for current version, and add it to the deploy_log
 if [ -f "$ci_project_changelogs_path/$project_version.md" ]; then
-jq --arg new_changelog "$ci_project_changelogs_path/$project_version.md" '.changelog = $new_changelog' "$config_file" >temp.json && mv temp.json "$config_file"
+    if [ $push_to_git = true ]; then
+        changelog_url="$git_remote_url/tree/$project_version/$project_version.md"
+        jq --arg new_changelog "$changelog_url" '.changelog = $new_changelog' "$config_file" >temp.json && mv temp.json "$config_file"
+    else
+        jq --arg new_changelog "$ci_project_changelogs_path/$project_version.md" '.changelog = $new_changelog' "$config_file" >temp.json && mv temp.json "$config_file"
+    fi
 fi
 
 # Remove new lines from the configuration file
@@ -242,9 +252,7 @@ if [ "$push_to_prod" = "push" ] || [ "$push_to_prod" = "git" ]; then
     #Copy current version's installer to the ci directory
     log_echo "All previous installers moved, current version's installer has been copied.."
     log_echo "Creating release branch in current repo"
-    push_to_git=$(getenv "GIT_PUSH")
-    git_remote_url=$(getenv "GIT_REMOTE_URL")
-    git_main_branch=$(getenv "GIT_MAIN_BRANCH")
+    
 
     # Check if $git_push is true
     if [ $push_to_git = true ]; then
