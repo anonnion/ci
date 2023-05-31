@@ -11,6 +11,7 @@ dir=$(pwd)
 # Get the directory containing the script
 ci_dir=$(dirname "$(readlink -f "$0")")
 echo "Using OpenCide installed in $ci_dir"
+echo
 # Read and parse environment file
 source $ci_dir/env.sh
 
@@ -94,7 +95,7 @@ create_new_project() {
     # project_alias=$1
     # env_file=$2
     # deploy_ignore=${3:-".deployignore"}
-
+    echo $project_alias > "$dir/.ci"
     # Create or copy config files for the project
     if [ ! -f "$env_file" ]; then
         env_file="$ci_path/$project_alias/.env"
@@ -134,12 +135,20 @@ publish() {
     source "$path/publisher.sh"
 }
 
+get_alias() {
+    if [ -f "$dir/.ci" ]; then
+        echo "Current Project alias: $(<$dir/.ci)"
+    else
+        echo "No OpenCide project found in the current directory"
+    fi
+}
 
 # Check input and act accordingly
 
 if [ -z $arg1 ] || [ "$arg1" == "help" ]; then
     # Print help message
     echo "CI v0.0.1"
+    get_alias
     echo "Usage: ci [init [project_name, path_to_env, path_to_deployignore], publish [project_alias, deploy_type, push_to_prod]]"
     echo "Arguments to init is optional, they will be asked if not provided."
     echo "Examples:"
@@ -173,4 +182,8 @@ fi
 
 if [ "$arg1" == "publish" ]; then
     publish
+fi
+
+if [ "$arg1" == "alias" ]; then
+    get_alias
 fi

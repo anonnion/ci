@@ -35,8 +35,10 @@ Where:
 ### Typing ci in terminal returns the help message below:
 
 <pre>
-Using OpenCide installed in /home/refdb/referraldb_2023/.ci
+Using OpenCide installed in /path/to/your/ci/directory
+
 CI v0.0.1
+Project alias: tp3
 Usage: ci [init [project_name, path_to_env, path_to_deployignore], publish [project_alias, deploy_type, push_to_prod]]
 Arguments to init is optional, they will be asked if not provided.
 Examples:
@@ -58,7 +60,7 @@ and:
     PUSH_OR_STORE_OR_GIT can be either `push` or `store` or `git`
     store: creates the release file only.
     git: creates the release file and push to git release branch.
-    push: creates the release file, pushes to git, and also creates a one-time, IP restricted access to download the release file. See the .env file of your project to configure access to the release file. 
-
+    push: creates the release file, pushes to git, and also creates a one-time, IP restricted access to download the release file. See the .env file of your project to configure access to the release file.
+    
     Note that the one-time server may not work on your local environment.
 </pre>
