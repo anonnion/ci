@@ -2,7 +2,7 @@
 # Function to process .env file into variables
 process_env() {
   if [ ! -f $ci_dir/.env ]; then
-    echo "CI_PATH=\"$(pwd)\"" > $ci_dir/.env
+    echo "CI_PATH=\"$ci_dir\"" > $ci_dir/.env
     echo >> $ci_dir/.env
   fi
   while IFS= read -r line; do
