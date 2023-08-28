@@ -91,18 +91,18 @@ wait_time=5
 if ! is_port_available "$server_port"; then
     echo "Port $server_port is available."
     # Wait for a client to connect
-    log_echo "Waiting for connection at http://localhost:$server_port"
+    log_echo "Waiting for connection from $client_ip at http://159.65.18.150:$server_port"
     # Start PHP development server in the background
-    php -S "localhost:$server_port" "$php_script_file" >/dev/null 2>&1
+    php -S "159.65.18.150:$server_port" "$php_script_file" >/dev/null 2>&1
     server_pid=$!
 else
     echo "Port $server_port is in use. Waiting for $wait_time seconds..."
     wait_for_port "$server_port" "$wait_time" 100
     echo "Port $server_port is now available."
     # Wait for a client to connect
-    log_echo "Waiting for connection at http://localhost:$server_port"
+    log_echo "Waiting for connection from $client_ip at http://159.65.18.150:$server_port"
     # Start PHP development server in the background
-    php -S "localhost:$server_port" "$php_script_file" >/dev/null 2>&1
+    php -S "159.65.18.150:$server_port" "$php_script_file" >/dev/null 2>&1
     server_pid=$!
 fi
 
