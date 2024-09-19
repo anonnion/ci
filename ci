@@ -116,7 +116,7 @@ create_new_project() {
         echo "PROJECT_PATH=\"$dir\"" >> "$env_file"
         echo "GIT_REMOTE_URL=\"\"" >> "$env_file"
         echo "GIT_MAIN_BRANCH=\"\"" >> "$env_file"
-        echo "GIT_PUSH=false" >> "$env_file"
+        echo "GIT_PUSH=0" >> "$env_file"
         echo "Environment file installed at $env_file"
     else
         cp "$env_file" "$ci_path/$project_alias/.env"
@@ -164,6 +164,7 @@ get_info() {
         echo "Remote Changelog: $changelog"
         echo "Version: $project_version"
         echo "Path: $project_path"
+        echo "Env file path: $ci_path/$project_alias/.env"
     else
         echo "No OpenCide project found in the current directory"
     fi

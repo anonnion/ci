@@ -41,11 +41,10 @@ if (\$client_ip === "$client_ip") {
     readfile(\$file_path);
     // Execute shell command to get the process IDs of the processes containing "php -S" followed by the port
     exec("pgrep -f 'php -S.*:$server_port'", \$processIDs);
-
     // Kill the processes
     foreach (\$processIDs as \$pid) {
         // Use the projectropriate signal to terminate the process gracefully (or forcefully if needed)
-        posix_kill(\$pid, SIGTERM);
+        // posix_kill(\$pid, SIGTERM);
     }
 
     echo "$project_name v$project_version published successfully, connection closed.";
